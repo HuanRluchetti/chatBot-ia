@@ -1,43 +1,35 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+const express = require("express");
 const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+
 require("dotenv").config();
+const validateEnv = require("./utils/validateEnv");
+const redisClient = require("./utils/connectRedis");
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
+validateEnv();
 
-var app = express();
+const prisma = new PrismaClient();
+const app = express();
 
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "pug");
+async function bootstrap() {
+  console.log("TESTING");
+  app.get("/api/healthchecker", async (_, res) => {
+    const message = await redisClient.get("try");
+    res.status(200).json({
+      status: "success",
+      message,
+    });
+  });
 
-app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+  const port = process.env.PORT;
+  app.listen(port, () => {
+    console.log(`Server on port: ${port}`);
+  });
+}
 
-app.use("/", indexRouter);
-
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
-
-// error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render("error");
-});
-
-module.exports = app;
+bootstrap()
+  .catch((err) => {
+    throw err;
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

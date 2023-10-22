@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require("../src/app");
+var app = require("../app");
 var debug = require("debug")("chatbot-ia:server");
 var http = require("http");
 require("dotenv").config();
@@ -85,27 +85,3 @@ function onListening() {
   var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   debug("Listening on " + bind);
 }
-
-async function bootstrap() {
-  // Testing
-  app.get("/api/healthchecker", async (_, res) => {
-    const message = await redisClient.get("try");
-    res.status(200).json({
-      status: "success",
-      message,
-    });
-  });
-
-  const port = 3030;
-  app.listen(port, () => {
-    console.log(`Server on port: ${port}`);
-  });
-}
-
-bootstrap()
-  .catch((err) => {
-    throw err;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
