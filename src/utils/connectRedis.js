@@ -1,22 +1,22 @@
-const { createClient } = require("redis");
+import { createClient } from "redis";
+
 const redisUrl = "redis://localhost:6379";
 
 const redisClient = createClient({
   url: redisUrl,
 });
 
-const connectRedis = () => {
-  redisClient.on("connect", () => {
+const connectRedis = async () => {
+  try {
+    await redisClient.connect();
     console.log("Redis client connect successfully");
     redisClient.set("try", "Welcome to Express and TypeScript with Prisma");
-  });
-
-  redisClient.on("error", (error) => {
-    console.log(error, "Não foi possivel se connectar com o redis");
+  } catch (error) {
+    console.log(error);
     setTimeout(connectRedis, 5000);
-  });
+  }
 };
 
 connectRedis();
 
-exports.modules = connectRedis();
+export default redisClient;

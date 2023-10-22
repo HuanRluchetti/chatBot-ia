@@ -1,15 +1,15 @@
-const envalid = require("envalid");
+import { cleanEnv, port, str } from "envalid";
 
 const validateEnv = () => {
-  envalid.cleanEnv(process.env, {
-    NODE_ENV: envalid.str(),
-    PORT: envalid.port(),
-    POSTGRES_HOST: envalid.str(),
-    POSTGRES_PORT: envalid.port(),
-    POSTGRES_USER: envalid.str(),
-    POSTGRES_PASSWORD: envalid.str(),
-    POSTGRES_DB: envalid.str(),
+  cleanEnv(process.env, {
+    NODE_ENV: str(),
+    PORT: port(),
+    POSTGRES_HOST: str(),
+    POSTGRES_PORT: port(),
+    POSTGRES_USER: str(),
+    POSTGRES_PASSWORD: str(),
+    POSTGRES_DB: str(),
   });
 };
 
-module.exports = validateEnv;
+export default validateEnv;
