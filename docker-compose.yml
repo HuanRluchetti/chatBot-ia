@@ -1,11 +1,22 @@
-version: "3.8"
-
+version: "3"
 services:
-  db:
-    image: mysql:8.0
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root_password
+  postgres:
+    image: postgres:latest
+    container_name: postgres
     ports:
-      - "3306:3306"
+      - "6500:5432"
+    volumes:
+      - progresDB:/data/postgres
+    env_file:
+      - ./.env
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisDB:/data
+volumes:
+  progresDB:
+  redisDB:

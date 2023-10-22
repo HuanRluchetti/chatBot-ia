@@ -5,7 +5,7 @@
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+
 }
 
 
@@ -13,7 +13,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Professor {
+model Teacher {
   id      Int      @id @default(autoincrement())
   name    String
   email   String   @unique
@@ -24,22 +24,22 @@ model Professor {
 
 
 model Classroom {
-  id         Int        @id @default(autoincrement())
+  id         Int  @id @default(autoincrement())
   name       String
-  professor  Professor   @relation(fields: [professorId], references: [id])
-  professorId Int
+  Teacher  Teacher  @relation(fields: [TeacherId], references: [id])
+  TeacherId Int
   messages  Message[]
   conversations Conversation[]
 }
 
 
 model Message {
-  id          Int        @id @default(autoincrement())
+  id  Int @id @default(autoincrement())
   messageType String
-  content    String
-  professor   Professor   @relation(fields: [professorId], references: [id])
-  professorId Int
-  classroom   Classroom        @relation(fields: [classroomId], references: [id])
+  content String
+  Teacher Teacher @relation(fields: [TeacherId], references: [id])
+  TeacherId Int
+  classroom Classroom @relation(fields: [classroomId], references: [id])
   classroomId      Int
 }
 
