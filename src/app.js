@@ -3,17 +3,15 @@ import {} from "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import validateEnv from "./utils/validateEnv.js";
 import redisClient from "./utils/connectRedis.js";
+import { router } from "./router.js";
 
 validateEnv();
-
-console.log("comesssou");
 
 const prisma = new PrismaClient();
 const app = express();
 
 async function bootstrap() {
   // Testing
-  console.log("TESTING");
   app.get("/api/healthchecker", async (_, res) => {
     const message = await redisClient.get("try");
     res.status(200).json({
@@ -34,4 +32,5 @@ bootstrap()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    app.use(router);
   });

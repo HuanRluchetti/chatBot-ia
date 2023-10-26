@@ -9,6 +9,7 @@ const validateEnv = () => {
     POSTGRES_USER: str(),
     POSTGRES_PASSWORD: str(),
     POSTGRES_DB: str(),
+    OPEN_AI_KEY: str(),
   });
 };
 
