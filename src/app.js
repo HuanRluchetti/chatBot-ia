@@ -34,3 +34,11 @@ bootstrap()
     await prisma.$disconnect();
     app.use(router);
   });
+
+// const user = await prisma.User.create({
+//   data: {
+//     email: "oliveira@teste.io",
+//     name: "Oliveira Teste",
+//     isTeacher: true,
+//   },
+// });

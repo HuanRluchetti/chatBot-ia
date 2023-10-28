@@ -1,64 +1,54 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+//npx prisma migrate dev --name <name> --create-only
+//npx prisma db push
 
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-
 }
-
 
 generator client {
   provider = "prisma-client-js"
 }
 
-model Teacher {
-  id      Int      @id @default(autoincrement())
-  name    String
-  email   String   @unique
-  password   String
-  messages   Message[]
-  classrooms Classroom[]
-}
-
-
-model Classroom {
-  id         Int  @id @default(autoincrement())
-  name       String
-  Teacher  Teacher  @relation(fields: [TeacherId], references: [id])
-  TeacherId Int
-  messages  Message[]
+model User {
+  id        Int      @id @default(autoincrement())
+  
+  name      String
+  email     String   @unique
+  isTeacher Boolean 
+  
+  chats Chat[]  @relation("UserChats")
+  teacherClassrooms Chat[] @relation("TeacherClassroom")
+  
+  messages   Interaction[]
   conversations Conversation[]
 }
 
-
-model Message {
-  id  Int @id @default(autoincrement())
-  messageType String
-  content String
-  Teacher Teacher @relation(fields: [TeacherId], references: [id])
-  TeacherId Int
-  classroom Classroom @relation(fields: [classroomId], references: [id])
-  classroomId      Int
+model Chat {
+  id         Int  @id @default(autoincrement())
+  name       String
+  Teacher    User? @relation("TeacherClassroom", fields: [TeacherId], references: [id])
+  TeacherId  Int?
+  messages    Interaction[]
+  conversations Conversation[]
+  users      User[] @relation("UserChats")
 }
 
+model Interaction {
+  id            Int      @id @default(autoincrement())
+  messageType   String
+  content       String
+  Teacher       User? @relation( fields: [TeacherId], references: [id])
+  TeacherId     Int?
+  curse     Chat @relation(fields: [curseId], references: [id])
+  curseId   Int
+}
 
 model Conversation {
-  id       Int      @id @default(autoincrement())
-  classroom     Classroom     @relation(fields: [classroomId], references: [id])
-  classroomId   Int
-  dateTime DateTime
-  participants User[] // If allowing user participation
+  id           Int      @id @default(autoincrement())
+  chat    Chat     @relation(fields: [chatId], references: [id])
+  chatId  Int
+  dateTime     DateTime
+  participants User[] 
 }
-
-model User {
-  id     Int      @id @default(autoincrement())
-  name   String
-  email  String   @unique
-  password  String
-  conversations Conversation[] // If allowing users to participate in multiple conversations
-}
-
-
-
