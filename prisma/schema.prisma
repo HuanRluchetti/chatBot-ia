@@ -41,8 +41,8 @@ model Interaction {
   content       String
   Teacher       User? @relation( fields: [TeacherId], references: [id])
   TeacherId     Int?
-  curse     Chat @relation(fields: [curseId], references: [id])
-  curseId   Int
+  chat     Chat @relation(fields: [chatId], references: [id])
+  chatId   Int
 }
 
 model Conversation {

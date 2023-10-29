@@ -3,7 +3,8 @@ import {} from "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import validateEnv from "./utils/validateEnv.js";
 import redisClient from "./utils/connectRedis.js";
-import { router } from "./router.js";
+import { userRouter } from "./routers/userRouter.js";
+import { interRouter } from "./routers/interactionsRouter.js";
 
 validateEnv();
 
@@ -32,13 +33,6 @@ bootstrap()
   })
   .finally(async () => {
     await prisma.$disconnect();
-    app.use(router);
+    app.use(userRouter);
+    app.use(interRouter);
   });
-
-// const user = await prisma.User.create({
-//   data: {
-//     email: "oliveira@teste.io",
-//     name: "Oliveira Teste",
-//     isTeacher: true,
-//   },
-// });
