@@ -4,6 +4,7 @@ import {
   getAll,
   create,
   update,
+  deleteInteraction,
 } from "../controllers/interactionController.js";
 
 const interRouter = express();
@@ -11,8 +12,8 @@ interRouter.use(express.json());
 
 interRouter.get("/interactions", getAll);
 
-interRouter.post("/create/interaction", create);
-interRouter.put("/update/interaction/:email", update);
-// interRouter.delete("/delete/interaction", deleteInteraction);
+interRouter.post("/create/interaction/:email", create);
+interRouter.put("/update/interaction/:id", update);
+interRouter.delete("/delete/interaction/:id", deleteInteraction);
 
 export { interRouter };
