@@ -1,5 +1,11 @@
 version: "3"
 services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    command: npm run dev
+
   postgres:
     image: postgres:latest
     container_name: postgres
@@ -9,6 +15,21 @@ services:
       - progresDB:/data/postgres
     env_file:
       - ./.env
+  prisma:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npx prisma generate
+    environment:
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: 6500
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./prisma:/app/prisma
+    networks:
+      - app-network
 
   redis:
     image: redis:alpine
@@ -20,3 +41,5 @@ services:
 volumes:
   progresDB:
   redisDB:
+networks:
+  app-network:
