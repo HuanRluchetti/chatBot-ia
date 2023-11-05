@@ -9,24 +9,22 @@ const getAll = async (_, res) => {
 };
 
 const create = async (req, res) => {
-  const { email } = req.params;
-  const { content, messageType, chat, chatId } = req.body;
+  const { chatId } = req.params;
+  const { content, messageType } = req.body;
 
-  const user = await prisma.user.findUnique({
+  const chat = await prisma.chat.findUnique({
     where: {
-      email,
-      isTeacher: true,
+      id,
     },
   });
 
   try {
     const interaction = await prisma.interaction.create({
       data: {
-        chat,
-        chatId,
-        Teacher: user.name,
+        chat: chat.name,
+        chatId: chat.id,
         content,
-        TeacherId: user.id,
+        TeacherId: chat.TeacherId,
         messageType,
       },
     });

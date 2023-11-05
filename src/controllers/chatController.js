@@ -10,7 +10,7 @@ const getAll = async (_, res) => {
 
 const create = async (req, res) => {
   const { email } = req.params;
-  const { content, messageType, chat, chatId } = req.body;
+  const { content, messageType, users, name } = req.body;
 
   const user = await prisma.user.findUnique({
     where: {
@@ -20,28 +20,20 @@ const create = async (req, res) => {
   });
 
   try {
-    const interaction = await prisma.interaction.create({
+    const chat = await prisma.chat.create({
       data: {
-        chat,
-        chatId,
+        name,
+        users,
         Teacher: user.name,
         content,
         TeacherId: user.id,
         messageType,
+        messages,
+        conversations,
       },
     });
 
-    const newUser = await prisma.user.update({
-      where: {
-        email,
-        isTeacher: true,
-      },
-      data: {
-        messages: interaction,
-      },
-    });
-
-    return res.status(201).json(interaction);
+    return res.status(201).json(chat);
   } catch (error) {
     return res.status(500).json(error);
   }
@@ -49,27 +41,27 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   const { id } = req.params;
-  const { content, messageType, chat } = req.body;
+  const { name, messages, conversations } = req.body;
 
-  const current = await prisma.interaction.findUnique({
+  const current = await prisma.chat.findUnique({
     where: {
       id,
     },
   });
 
   try {
-    const interaction = await prisma.interaction.update({
+    const chat = await prisma.chat.update({
       where: {
         id,
       },
       data: {
-        chat: chat || current.chat,
-        content: content || current.content,
-        messageType: messageType || current.messageType,
+        name,
+        messages,
+        conversations,
       },
     });
 
-    return res.status(200).json(interaction);
+    return res.status(200).json(chat);
   } catch (error) {
     return res.status(500).json(error);
   }
@@ -79,13 +71,13 @@ const deleteChat = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const interaction = await prisma.interaction.delete({
+    const chat = await prisma.chat.delete({
       where: {
         id,
       },
     });
 
-    return res.status(204).json(interaction);
+    return res.status(204).json(chat);
   } catch (error) {
     return res.status(500).json(error);
   }

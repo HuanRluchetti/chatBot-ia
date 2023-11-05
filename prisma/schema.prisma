@@ -1,6 +1,7 @@
 //npx prisma migrate dev --name <name> --create-only
 //npx prisma db push
 
+//npx prisma migrate dev --name <name> --create-only npx prisma db push
 
 datasource db {
   provider = "postgresql"
