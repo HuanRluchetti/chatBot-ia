@@ -47,7 +47,7 @@ model Interaction {
 }
 
 model Conversation {
-  id           Int      @id @default(autoincrement())
+  id      Int      @id @default(autoincrement())
   chat    Chat     @relation(fields: [chatId], references: [id])
   chatId  Int
   dateTime     DateTime
