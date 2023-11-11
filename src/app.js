@@ -5,6 +5,7 @@ import validateEnv from "./utils/validateEnv.js";
 import redisClient from "./utils/connectRedis.js";
 
 import { userRouter } from "./routers/userRouter.js";
+import { chatRouter } from "./routers/chatRouter.js";
 import { interRouter } from "./routers/interactionsRouter.js";
 
 import {} from "dotenv/config";
@@ -15,14 +16,6 @@ const prisma = new PrismaClient();
 const app = express();
 
 app.use(express.json());
-
-import { OpenAI } from "openai";
-
-const configuration = {
-  apiKey: process.env.OPENAI_API_KEY,
-};
-const openai = new OpenAI(configuration);
-const response = await openai.listEngines();
 
 async function bootstrap() {
   // Testing
@@ -48,4 +41,5 @@ bootstrap()
     await prisma.$disconnect();
     app.use(userRouter);
     app.use(interRouter);
+    app.use(chatRouter);
   });

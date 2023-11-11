@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { compareSync } from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -12,30 +13,27 @@ const create = async (req, res) => {
   const { chatId } = req.params;
   const { content, messageType } = req.body;
 
+  const convertedId = Number(chatId);
+
   const chat = await prisma.chat.findUnique({
     where: {
-      id,
+      id: convertedId,
     },
   });
+
+  if (!chat) return res.status(400).json("chat not found");
 
   try {
     const interaction = await prisma.interaction.create({
       data: {
-        chat: chat.name,
-        chatId: chat.id,
+        chat: {
+          connect: { id: chat.id },
+        },
         content,
-        TeacherId: chat.TeacherId,
+        Teacher: {
+          connect: { id: chat.TeacherId },
+        },
         messageType,
-      },
-    });
-
-    const newUser = await prisma.user.update({
-      where: {
-        email,
-        isTeacher: true,
-      },
-      data: {
-        messages: interaction,
       },
     });
 

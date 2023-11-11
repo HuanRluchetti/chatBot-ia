@@ -10,7 +10,7 @@ const chatRouter = express();
 chatRouter.use(express.json());
 
 chatRouter.get("/chats", getAll);
-chatRouter.post("/regiter/chat/:email", create);
+chatRouter.post("/register/chat/:email", create);
 chatRouter.put("/update/chat/:id", update);
 chatRouter.delete("/delete/chat/:id", deleteChat);
 

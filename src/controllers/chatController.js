@@ -10,7 +10,7 @@ const getAll = async (_, res) => {
 
 const create = async (req, res) => {
   const { email } = req.params;
-  const { content, messageType, users, name } = req.body;
+  const { name } = req.body;
 
   const user = await prisma.user.findUnique({
     where: {
@@ -19,35 +19,29 @@ const create = async (req, res) => {
     },
   });
 
+  if (!user) {
+    return res.status(400).json("user email incorrect");
+  }
+
   try {
     const chat = await prisma.chat.create({
       data: {
         name,
-        users,
-        Teacher: user.name,
-        content,
-        TeacherId: user.id,
-        messageType,
-        messages,
-        conversations,
+        Teacher: {
+          connect: { id: user.id },
+        },
       },
     });
 
     return res.status(201).json(chat);
   } catch (error) {
-    return res.status(500).json(error);
+    return res.status(500).json(error, "chegou aqui");
   }
 };
 
 const update = async (req, res) => {
   const { id } = req.params;
   const { name, messages, conversations } = req.body;
-
-  const current = await prisma.chat.findUnique({
-    where: {
-      id,
-    },
-  });
 
   try {
     const chat = await prisma.chat.update({
