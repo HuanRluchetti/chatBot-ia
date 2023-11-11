@@ -20,7 +20,7 @@ const create = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(400).json("user email incorrect");
+    return res.status(400).json("user not found");
   }
 
   try {
@@ -30,6 +30,16 @@ const create = async (req, res) => {
         Teacher: {
           connect: { id: user.id },
         },
+      },
+    });
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        teacherClassrooms: { connect: { id: chat.id } },
+        chats: { connect: { id: chat.id } },
       },
     });
 

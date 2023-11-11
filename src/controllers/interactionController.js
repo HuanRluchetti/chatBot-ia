@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { compareSync } from "bcrypt";
+import { OpenAI } from "openai";
 
 const prisma = new PrismaClient();
 
@@ -10,7 +11,7 @@ const getAll = async (_, res) => {
 };
 
 const create = async (req, res) => {
-  const { chatId } = req.params;
+  const { chatId, intId } = req.params;
   const { content, messageType } = req.body;
 
   const convertedId = Number(chatId);
@@ -23,9 +24,23 @@ const create = async (req, res) => {
 
   if (!chat) return res.status(400).json("chat not found");
 
+  let realIntId;
+  if (intId == null) {
+    realIntId = -1;
+  } else {
+    realIntId = intId;
+  }
+
   try {
-    const interaction = await prisma.interaction.create({
-      data: {
+    const interaction = await prisma.interaction.upsert({
+      where: {
+        id: Number(realIntId),
+      },
+      update: {
+        content,
+        messageType,
+      },
+      create: {
         chat: {
           connect: { id: chat.id },
         },
@@ -37,7 +52,37 @@ const create = async (req, res) => {
       },
     });
 
-    return res.status(201).json(interaction);
+    const configuration = {
+      apiKey: process.env.OPENAI_API_KEY,
+    };
+
+    const openai = new OpenAI(configuration);
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You will be a teacher, on a certain online platform, and you will have to answer questions about the course content and how the course works",
+        },
+        {
+          role: "user",
+          content: interaction.content,
+        },
+        {
+          role: "professor",
+          content: interaction.messageType,
+        },
+      ],
+      usage: {
+        prompt_tokens: 9,
+        completion_tokens: 12,
+        total_tokens: 21,
+      },
+    });
+
+    return res.status(201).json(response.choices[0]);
   } catch (error) {
     return res.status(500).json(error);
   }

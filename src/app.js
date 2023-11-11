@@ -18,7 +18,6 @@ const app = express();
 app.use(express.json());
 
 async function bootstrap() {
-  // Testing
   app.get("/api/healthchecker", async (_, res) => {
     const message = await redisClient.get("try");
     res.status(200).json({
