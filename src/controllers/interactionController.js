@@ -53,6 +53,7 @@ const create = async (req, res) => {
     });
 
     const configuration = {
+      organization: "org-58ZC4z9BAv8xkpkrSegCqBRg",
       apiKey: process.env.OPENAI_API_KEY,
     };
 
@@ -63,23 +64,23 @@ const create = async (req, res) => {
       messages: [
         {
           role: "system",
-          content:
-            "You will be a teacher, on a certain online platform, and you will have to answer questions about the course content and how the course works",
+          content: interaction.messageType,
+        },
+        {
+          role: "user",
+          content: "Você pode me ajudar com uma duvida?",
+        },
+        {
+          role: "assistant",
+          content: "Claro, estou a seu dispor, oq deseja saber?",
         },
         {
           role: "user",
           content: interaction.content,
         },
-        {
-          role: "professor",
-          content: interaction.messageType,
-        },
       ],
-      usage: {
-        prompt_tokens: 9,
-        completion_tokens: 12,
-        total_tokens: 21,
-      },
+      max_tokens: 2048,
+      temperature: 0.5,
     });
 
     return res.status(201).json(response.choices[0]);
