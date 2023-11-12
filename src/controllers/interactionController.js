@@ -52,38 +52,7 @@ const create = async (req, res) => {
       },
     });
 
-    const configuration = {
-      organization: "org-58ZC4z9BAv8xkpkrSegCqBRg",
-      apiKey: process.env.OPENAI_API_KEY,
-    };
-
-    const openai = new OpenAI(configuration);
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: interaction.messageType,
-        },
-        {
-          role: "user",
-          content: "Você pode me ajudar com uma duvida?",
-        },
-        {
-          role: "assistant",
-          content: "Claro, estou a seu dispor, oq deseja saber?",
-        },
-        {
-          role: "user",
-          content: interaction.content,
-        },
-      ],
-      max_tokens: 2048,
-      temperature: 0.5,
-    });
-
-    return res.status(201).json(response.choices[0]);
+    return res.status(201).json(interaction);
   } catch (error) {
     return res.status(500).json(error);
   }

@@ -7,6 +7,7 @@ import redisClient from "./utils/connectRedis.js";
 import { userRouter } from "./routers/userRouter.js";
 import { chatRouter } from "./routers/chatRouter.js";
 import { interRouter } from "./routers/interactionsRouter.js";
+import { conversationRouter } from "./routers/conversationrouter.js ";
 
 import {} from "dotenv/config";
 
@@ -41,4 +42,5 @@ bootstrap()
     app.use(userRouter);
     app.use(interRouter);
     app.use(chatRouter);
+    app.use(conversationRouter);
   });
